@@ -4,7 +4,7 @@
 #include "esp_awg.h"
 
 #ifdef AWG_TYPE_JDS8000
-typedef enum
+typedef enum // values used for AWG set wave type commands
 {
     EWaveType_Sine = 0,
     EWaveType_Square = 1,
@@ -37,31 +37,33 @@ typedef enum
 class espAWGJDS8000 : public espAWG
 {
   public:
+    // Used to set default AWG settings
+    void initDevice(void);
+
+    // Set the wave type for a given channel - use EWaveType
     void setCh1Wave(uint8_t wave);
     void setCh2Wave(uint8_t wave);
 
-    /* 0 - off; 1 - on */
+    // Turn a channel off (0) or on (1)
+    void setChOutput(uint32_t output1, uint32_t output2);
     void setCh1Output(uint32_t output);
     void setCh2Output(uint32_t output);
 
-    /* Set frequency in Hz */
+    // Set frequency in Hz
     void setCh1Freq(uint32_t frequency);
     void setCh2Freq(uint32_t frequency);
 
-    /* Ampl is in mV: 12.345V = 12345 */
+    // Amplitude in mV - ex: 12.345V = 12345
     void setCh1Ampl(uint32_t ampl);
     void setCh2Ampl(uint32_t ampl);
 
-    /* Phase is in 0.1 deg: 12.5 deg = 125 */
+    // Phase in 0.1 deg - ex: 12.5 deg = 125
     void setCh1Phase(uint32_t phase);
     void setCh2Phase(uint32_t phase);
 
-    /* Offset is in mV: 12.345V = 12345 */
+    // Offset in mV - ex: 12.345V = 12345
     void setCh1Offset(int32_t offset);
     void setCh2Offset(int32_t offset);
-
-    // Can be used to set some default parameters
-    void initDevice(void);
 };
 
 #endif // _ESP_JDS8000_H_

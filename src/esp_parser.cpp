@@ -7,9 +7,9 @@ espAWGJDS8000 awg;
 
 #include "esp_parser.h"
 
-volatile char *gReadBuffer = NULL;
+volatile char *gReadBuffer = NULL; // Buffer for holding responses to oscilloscope
 
-/* Function parses number from the msg string expects natural a number. */
+// Function parses number from the msg string expects a natural number
 static uint32_t parseNumber(char *msg)
 {
     uint32_t number = 0;
@@ -28,10 +28,10 @@ static uint32_t parseNumber(char *msg)
 
 /* Similar to parseNumber, but handles also decimal '.' and '-' sign.
     Return value is multiplied by dec_count to include the decimal part:
-        msg         dec_count       result
-        123.456     4               1234560
-        -1.2        2               -120
-        12346.9388  3               12346938 */
+        msg         dec_count   result
+        123.456     4           1234560
+        -1.2        2           -120
+        12346.9388  3           12346938 */
 static int32_t parseDecimal(char *msg, uint8_t dec_count = 3)
 {
     uint8_t dot = 0;
@@ -74,9 +74,16 @@ static int32_t parseDecimal(char *msg, uint8_t dec_count = 3)
 
 /* TODO: This handle function doesn't implement the commands correctly, even though they are interpreted enough
     to get by.The manual of Siglent AWG commands can be found at:
+
         https://siglentna.com/wp-content/uploads/dlm_uploads/2024/06/SDG_Programming-Guide_PG02-E05C.pdf */
 void handleScopeMsg(char *msg, uint8_t len)
 {
+    // Ensure AWG ia initialized for use by the scope
+    if (!awg.isInitialized)
+    {
+        awg.initDevice();
+    }
+
     bool isReadRequest = false;
 
     // write line to terminal
@@ -92,6 +99,7 @@ void handleScopeMsg(char *msg, uint8_t len)
             msgString[i] = msg[i];
         }
     }
+
     msgString[len] = 0;
 
     DEBUG("   [parser:handleScopeMsg] msg = ");
@@ -125,7 +133,7 @@ void handleScopeMsg(char *msg, uint8_t len)
             isReadRequest = true;
             if (gReadBuffer != NULL)
             {
-                free((void *)gReadBuffer); /* Prevent memory leaks */
+                free((void *)gReadBuffer); // Prevent memory leaks
             }
 
             // This is where we have the microcontroller pretend to be the Siglent AWG
@@ -141,6 +149,7 @@ void handleScopeMsg(char *msg, uint8_t len)
             len -= 3;
 
             DEBUG_LN("   [parser:handleScopeMsg] C1: selected");
+            // set the channel state variable to 1
             selectedChannel = 1;
         }
 
@@ -151,6 +160,7 @@ void handleScopeMsg(char *msg, uint8_t len)
             len -= 3;
 
             DEBUG_LN("   [parser:handleScopeMsg] C2: selected");
+            // set the channel state variable to 2
             selectedChannel = 2;
         }
 
@@ -167,7 +177,7 @@ void handleScopeMsg(char *msg, uint8_t len)
 
             gReadBuffer = (char *)malloc(strlen(ID) + 1);
 
-            // Gather up a bunch of stuff here, send ID for now
+            // TODO: Gather up a bunch of current state stuff here, but for now, just send ID again
             strcpy((char *)gReadBuffer, ID);
             break;
         }
@@ -199,7 +209,7 @@ void handleScopeMsg(char *msg, uint8_t len)
             }
             else
             {
-                // Add other wave types here
+                // Add tests for other wave types here - should be a switch/case
                 DEBUG_LN(": NOT SINE");
             }
         }

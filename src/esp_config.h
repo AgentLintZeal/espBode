@@ -1,10 +1,13 @@
 #ifndef _ESP_CONFIG_H_
 #define _ESP_CONFIG_H_
 
-#if defined(ESP8266)
+#ifdef ESP8266
 #include <ESP8266WiFi.h>
-#elif defined(ESP32)
+#elif ESP32
 #include <WiFi.h>
+// Hardware Serial 2 pins
+#define RXD2 16
+#define TXD2 17
 #else
 #error PLEASE SELECT ESP32 or ESP8266
 #endif
@@ -59,7 +62,7 @@
 #if defined(DEBUG_UART) || defined(ESP32)
 #define DEBUG(TEXT) Serial.print(TEXT);
 #define DEBUG_LN(TEXT) Serial.println(TEXT);
-#elif defined(DEBUG_TELNET)
+#elif DEBUG_TELNET
 #include "ESPTelnet.h"
 extern ESPTelnet telnet;
 #define DEBUG(TEXT)                                                                                                    \
@@ -70,6 +73,7 @@ extern ESPTelnet telnet;
     telnet.loop();
 #else
 #define DEBUG(TEXT)
+#define DEBUG_LN(TEXT)
 #endif
 
 #endif // _ESP_CONFIG_H_

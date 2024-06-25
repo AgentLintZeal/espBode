@@ -61,7 +61,7 @@
 #### === Work in Progress ===
 
     :w24=w,x,y,z,       w: 0 for WAV/MOD, 1=SYS, 2=SWEEP, 3=VCO, 4=MEAS, 5=Controls graphic header ---\______/----
-                        x: 0=Language Setup, 1=CH1 Focus, 2=CH2 Focus, 3=SYstem Setup, 4=Measurement, 5=Counter, 6=Sweep Freq, 7=VCO Freq
+                        x: 0=Language Setup, 1=CH1 Focus, 2=CH2 Focus, 3=System Setup, 4=Measurement, 5=Counter, 6=Sweep, 7=VCO
                         y: 0-6=WAV for CH, 7=MOD for CH2 (combinations with z != 0 selected individual parameters)
                         z: 0-6=WAV for CH, 7=MOD for CH1 (combinations with y != 6 selected individual parameters)
 
@@ -204,7 +204,7 @@
 
 ##### Channel [0|1], Time (0-640 * 100s), Direction [0=Increase|1=Decrease|2=Round], Mode [0=Line|1=Logarithm]
 
-    :w64=0,1000,0,0,    CH 1, Time 30.00s, Direction Increasing, Mode Line
+    :w64=0,1000,0,0,    CH 1, Time 10.00s, Direction Increasing, Mode Line
     :w64=1,64000,2,1,   CH 2, Time 640.00s, Direction Round, Mode Logarithm
 
 ### Sweep
@@ -298,3 +298,9 @@
     :w67=241000,        24,100.0 Hz
 
 * Reads 81-86 repeatedly
+
+## General Notes
+
+### USB Capture Info
+
+#### When using WireShark USB capture, select a filter of usb.src == "2.28.2" || usb.dst == "2.28.2"
